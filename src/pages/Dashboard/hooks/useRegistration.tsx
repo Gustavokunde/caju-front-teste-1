@@ -40,7 +40,6 @@ export const RegistrationProvider = (props: Props) => {
 
   const searchRegistrations = async (cpf?: string) => {
     const response = await getRegistrations({ cpf });
-    console.log(response.data);
     setRegistrations(response.data);
   };
 
