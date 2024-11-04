@@ -8,6 +8,7 @@ const DashboardPage = () => {
   const [cpf, setCpf] = useState("");
 
   const onSearchChanged = (search: string) => {
+    console.log("onsearch");
     setCpf(search);
   };
 
