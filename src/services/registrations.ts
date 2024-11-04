@@ -5,10 +5,13 @@ interface GetRegistrationParams {
   cpf?: string;
 }
 
-export const getRegistrations = async (params: GetRegistrationParams) => {
-  return api.get(`/registrations`, {
+export const getRegistrations = async (
+  params: GetRegistrationParams
+): Promise<Registration[]> => {
+  const response = await api.get(`/registrations`, {
     params,
   });
+  return response.data;
 };
 
 export const changeRegistrationStatus = (

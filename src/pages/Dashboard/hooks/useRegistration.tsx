@@ -1,12 +1,14 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { createContext, useContext, useEffect } from "react";
 import {
   changeRegistrationStatus,
   getRegistrations,
 } from "~/services/registrations";
 import { Registration, REGISTRATION_STATUS } from "~/types/registration";
+import { getOnlyNumbers } from "~/utils/cpf";
 
 interface RegistrationContextInterface {
-  registrations: Registration[] | null;
+  registrations?: Registration[];
   searchRegistrations: (cpf?: string) => void;
   onChangeStatus: (
     registration: Registration,
@@ -30,44 +32,37 @@ interface Props {
 }
 
 export const RegistrationProvider = (props: Props) => {
-  const [registrations, setRegistrations] = useState<Registration[] | null>(
-    null
-  );
-  const [loading, setLoading] = useState(false);
+  const { data, isError, isFetching, refetch } = useQuery({
+    queryKey: ["registrations"],
+    queryFn: () => getRegistrations({ cpf: getOnlyNumbers(props.cpf) }),
+  });
 
+  console.log(isFetching);
   useEffect(() => {
-    searchRegistrations(props.cpf);
+    searchRegistrations();
   }, [props.cpf]);
 
-  const startLoading = () => setLoading(true);
-  const stopLoading = () => setLoading(false);
-
-  const searchRegistrations = async (cpf?: string) => {
-    startLoading();
-    const response = await getRegistrations({ cpf });
-    setRegistrations(response.data);
-    stopLoading();
+  const searchRegistrations = async () => {
+    refetch();
   };
 
   const onChangeStatus = async (
     registration: Registration,
     status: REGISTRATION_STATUS
   ) => {
-    startLoading();
     await changeRegistrationStatus(registration, status);
     await searchRegistrations();
-    stopLoading();
   };
 
   return (
     <RegistrationContext.Provider
       value={{
-        registrations,
+        registrations: data,
         searchRegistrations,
         onChangeStatus,
       }}
     >
-      {loading && <p>Loading...</p>}
+      {isFetching && <p>Loading...</p>}
       {props.children}
     </RegistrationContext.Provider>
   );
