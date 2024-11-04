@@ -33,22 +33,30 @@ export const RegistrationProvider = (props: Props) => {
   const [registrations, setRegistrations] = useState<Registration[] | null>(
     null
   );
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     searchRegistrations(props.cpf);
   }, [props.cpf]);
 
+  const startLoading = () => setLoading(true);
+  const stopLoading = () => setLoading(false);
+
   const searchRegistrations = async (cpf?: string) => {
+    startLoading();
     const response = await getRegistrations({ cpf });
     setRegistrations(response.data);
+    stopLoading();
   };
 
   const onChangeStatus = async (
     registration: Registration,
     status: REGISTRATION_STATUS
   ) => {
+    startLoading();
     await changeRegistrationStatus(registration, status);
     await searchRegistrations();
+    stopLoading();
   };
 
   return (
@@ -59,6 +67,7 @@ export const RegistrationProvider = (props: Props) => {
         onChangeStatus,
       }}
     >
+      {loading && <p>Loading...</p>}
       {props.children}
     </RegistrationContext.Provider>
   );
