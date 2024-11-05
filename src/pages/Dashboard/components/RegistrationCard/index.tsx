@@ -1,37 +1,66 @@
-import { ButtonSmall } from "~/components/Buttons";
-import * as S from "./styles";
 import {
-  HiOutlineMail,
-  HiOutlineUser,
   HiOutlineCalendar,
+  HiOutlineMail,
   HiOutlineTrash,
+  HiOutlineUser,
 } from "react-icons/hi";
+import { ButtonSmall } from "~/components/Buttons";
+import { Registration, REGISTRATION_STATUS } from "~/types/registration";
+import { useRegistration } from "../../../../hooks/useRegistration";
+import * as S from "./styles";
 
 type Props = {
-  data: any;
+  data: Registration;
 };
 
-const RegistrationCard = (props: Props) => {
+const RegistrationCard = ({ data }: Props) => {
+  const { changeStatus, deleteRegistrationById } = useRegistration();
+
   return (
     <S.Card>
       <S.IconAndText>
         <HiOutlineUser />
-        <h3>{props.data.employeeName}</h3>
+        <h3>{data.employeeName}</h3>
       </S.IconAndText>
       <S.IconAndText>
         <HiOutlineMail />
-        <p>{props.data.email}</p>
+        <p>{data.email}</p>
       </S.IconAndText>
       <S.IconAndText>
         <HiOutlineCalendar />
-        <span>{props.data.admissionDate}</span>
+        <span>{data.admissionDate}</span>
       </S.IconAndText>
       <S.Actions>
-        <ButtonSmall bgcolor="rgb(255, 145, 154)" >Reprovar</ButtonSmall>
-        <ButtonSmall bgcolor="rgb(155, 229, 155)">Aprovar</ButtonSmall>
-        <ButtonSmall bgcolor="#ff8858">Revisar novamente</ButtonSmall>
-
-        <HiOutlineTrash />
+        <div>
+          {data.status == REGISTRATION_STATUS.REVIEW && (
+            <ButtonSmall
+              bgcolor="rgb(255, 145, 154)"
+              onClick={() => changeStatus(data, REGISTRATION_STATUS.REPROVED)}
+            >
+              Reprovar
+            </ButtonSmall>
+          )}
+          {data.status == REGISTRATION_STATUS.REVIEW && (
+            <ButtonSmall
+              bgcolor="rgb(155, 229, 155)"
+              onClick={() => changeStatus(data, REGISTRATION_STATUS.APPROVED)}
+            >
+              Aprovar
+            </ButtonSmall>
+          )}
+          {data.status !== REGISTRATION_STATUS.REVIEW && (
+            <ButtonSmall
+              bgcolor="#ff8858"
+              onClick={() => changeStatus(data, REGISTRATION_STATUS.REVIEW)}
+            >
+              Revisar novamente
+            </ButtonSmall>
+          )}
+        </div>
+        <HiOutlineTrash
+          data-testid="trash-icon"
+          onClick={() => deleteRegistrationById(data.id!)}
+        />
       </S.Actions>
     </S.Card>
   );
