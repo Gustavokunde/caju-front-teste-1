@@ -2,9 +2,9 @@ export interface Registration {
   admissionDate: string;
   email: string;
   employeeName: string;
-  status: REGISTRATION_STATUS;
+  status?: REGISTRATION_STATUS;
   cpf: string;
-  id: number;
+  id?: number;
 }
 
 export enum REGISTRATION_STATUS {

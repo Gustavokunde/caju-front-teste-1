@@ -10,7 +10,8 @@ export const formatCpf = (cpf: string) => {
   return cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
 };
 
-export const isCpfValid = (cpf: string) => {
+export const isCpfValid = (cpf: string | null) => {
+  if (!cpf) return;
   cpf = getOnlyNumbers(cpf);
   if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
 

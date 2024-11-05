@@ -14,7 +14,7 @@ type Props = {
 };
 
 const RegistrationCard = ({ data }: Props) => {
-  const { onChangeStatus } = useRegistration();
+  const { changeStatus } = useRegistration();
 
   return (
     <S.Card>
@@ -35,7 +35,7 @@ const RegistrationCard = ({ data }: Props) => {
           {data.status == REGISTRATION_STATUS.REVIEW && (
             <ButtonSmall
               bgcolor="rgb(255, 145, 154)"
-              onClick={() => onChangeStatus(data, REGISTRATION_STATUS.REPROVED)}
+              onClick={() => changeStatus(data, REGISTRATION_STATUS.REPROVED)}
             >
               Reprovar
             </ButtonSmall>
@@ -43,7 +43,7 @@ const RegistrationCard = ({ data }: Props) => {
           {data.status == REGISTRATION_STATUS.REVIEW && (
             <ButtonSmall
               bgcolor="rgb(155, 229, 155)"
-              onClick={() => onChangeStatus(data, REGISTRATION_STATUS.APPROVED)}
+              onClick={() => changeStatus(data, REGISTRATION_STATUS.APPROVED)}
             >
               Aprovar
             </ButtonSmall>
@@ -51,7 +51,7 @@ const RegistrationCard = ({ data }: Props) => {
           {data.status !== REGISTRATION_STATUS.REVIEW && (
             <ButtonSmall
               bgcolor="#ff8858"
-              onClick={() => onChangeStatus(data, REGISTRATION_STATUS.REVIEW)}
+              onClick={() => changeStatus(data, REGISTRATION_STATUS.REVIEW)}
             >
               Revisar novamente
             </ButtonSmall>

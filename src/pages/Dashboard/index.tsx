@@ -1,23 +1,25 @@
-import { useState } from "react";
-import { RegistrationProvider } from "../../hooks/useRegistration";
+import { useEffect } from "react";
+import { useRegistration } from "../../hooks/useRegistration";
 import Columns from "./components/Columns";
 import { SearchBar } from "./components/Searchbar";
 import * as S from "./styles";
 
 const DashboardPage = () => {
-  const [cpf, setCpf] = useState("");
+  const { registrations, refetch, setSearchField } = useRegistration();
+
+  useEffect(() => {
+    if (registrations) refetch();
+  }, []);
 
   const onSearchChanged = (search: string) => {
-    setCpf(search);
+    setSearchField(search);
   };
 
   return (
-    <RegistrationProvider cpf={cpf}>
-      <S.Container>
-        <SearchBar onSearchChanged={onSearchChanged} />
-        <Columns />
-      </S.Container>
-    </RegistrationProvider>
+    <S.Container>
+      <SearchBar onSearchChanged={onSearchChanged} />
+      <Columns />
+    </S.Container>
   );
 };
 export default DashboardPage;

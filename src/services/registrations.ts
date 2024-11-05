@@ -15,8 +15,7 @@ export const getRegistrations = async (
 };
 
 export const createRegistration = async (body: Registration) => {
-  const response = await api.post(`/registrations`, body);
-  return response.data;
+  return await api.post(`/registrations`, body);
 };
 
 export const changeRegistrationStatus = async (
