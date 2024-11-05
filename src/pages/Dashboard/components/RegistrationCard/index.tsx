@@ -57,7 +57,10 @@ const RegistrationCard = ({ data }: Props) => {
             </ButtonSmall>
           )}
         </div>
-        <HiOutlineTrash onClick={() => deleteRegistrationById(data.id)} />
+        <HiOutlineTrash
+          data-testid="trash-icon"
+          onClick={() => deleteRegistrationById(data.id!)}
+        />
       </S.Actions>
     </S.Card>
   );
