@@ -14,6 +14,10 @@ export const getRegistrations = async (
   return response.data;
 };
 
+export const deleteRegistration = async (id: number) => {
+  return await api.delete(`/registrations/${id}`);
+};
+
 export const createRegistration = async (body: Registration) => {
   return await api.post(`/registrations`, body);
 };

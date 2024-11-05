@@ -14,7 +14,7 @@ type Props = {
 };
 
 const RegistrationCard = ({ data }: Props) => {
-  const { changeStatus } = useRegistration();
+  const { changeStatus, deleteRegistrationById } = useRegistration();
 
   return (
     <S.Card>
@@ -57,7 +57,7 @@ const RegistrationCard = ({ data }: Props) => {
             </ButtonSmall>
           )}
         </div>
-        <HiOutlineTrash />
+        <HiOutlineTrash onClick={() => deleteRegistrationById(data.id)} />
       </S.Actions>
     </S.Card>
   );

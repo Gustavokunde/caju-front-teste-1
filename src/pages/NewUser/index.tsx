@@ -33,6 +33,7 @@ const NewUserPage = () => {
   };
 
   const onSubmit = async (values: Registration) => {
+    values.admissionDate = new Date(values.admissionDate).toLocaleDateString();
     await createNewRegistration(values);
     goToHome();
   };
