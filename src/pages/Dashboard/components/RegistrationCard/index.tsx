@@ -6,7 +6,7 @@ import {
 } from "react-icons/hi";
 import { ButtonSmall } from "~/components/Buttons";
 import { Registration, REGISTRATION_STATUS } from "~/types/registration";
-import { useRegistration } from "../../hooks/useRegistration";
+import { useRegistration } from "../../../../hooks/useRegistration";
 import * as S from "./styles";
 
 type Props = {

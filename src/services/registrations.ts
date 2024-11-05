@@ -14,11 +14,16 @@ export const getRegistrations = async (
   return response.data;
 };
 
-export const changeRegistrationStatus = (
+export const createRegistration = async (body: Registration) => {
+  const response = await api.post(`/registrations`, body);
+  return response.data;
+};
+
+export const changeRegistrationStatus = async (
   registration: Registration,
   status: REGISTRATION_STATUS
 ) => {
-  return api.put(`/registrations/${registration.id}`, {
+  return await api.put(`/registrations/${registration.id}`, {
     ...registration,
     status,
   });

@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { createContext, useContext, useEffect } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createContext, useContext } from "react";
 import {
   changeRegistrationStatus,
+  createRegistration,
   getRegistrations,
 } from "~/services/registrations";
 import { Registration, REGISTRATION_STATUS } from "~/types/registration";
@@ -9,19 +10,20 @@ import { getOnlyNumbers } from "~/utils/cpf";
 
 interface RegistrationContextInterface {
   registrations?: Registration[];
-  searchRegistrations: (cpf?: string) => void;
+  refetch: () => void;
   onChangeStatus: (
     registration: Registration,
     status: REGISTRATION_STATUS
   ) => Promise<void>;
+  newRegistration: (registration: Registration) => Promise<void>;
 }
 
 export const RegistrationContext = createContext<RegistrationContextInterface>({
-  registrations: null,
-  searchRegistrations: async (cpf?: string) => {
-    return cpf;
-  },
+  refetch: async () => {},
   onChangeStatus: () => {
+    return Promise.resolve();
+  },
+  newRegistration: (registration: Registration) => {
     return Promise.resolve();
   },
 });
@@ -37,32 +39,36 @@ export const RegistrationProvider = (props: Props) => {
     queryFn: () => getRegistrations({ cpf: getOnlyNumbers(props.cpf) }),
   });
 
-  console.log(isFetching);
-  useEffect(() => {
-    searchRegistrations();
-  }, [props.cpf]);
+  const { mutateAsync: changeStatus, isIdle } = useMutation({
+    mutationFn: (param: {
+      registration: Registration;
+      status: REGISTRATION_STATUS;
+    }) => changeRegistrationStatus(param.registration, param.status),
+  });
 
-  const searchRegistrations = async () => {
-    refetch();
-  };
+  const { mutateAsync: newRegistration } = useMutation({
+    mutationFn: (registration: Registration) =>
+      createRegistration(registration),
+  });
 
   const onChangeStatus = async (
     registration: Registration,
     status: REGISTRATION_STATUS
   ) => {
-    await changeRegistrationStatus(registration, status);
-    await searchRegistrations();
+    await changeStatus({ registration, status });
+    await refetch();
   };
 
   return (
     <RegistrationContext.Provider
       value={{
+        newRegistration,
         registrations: data,
-        searchRegistrations,
+        refetch,
         onChangeStatus,
       }}
     >
-      {isFetching && <p>Loading...</p>}
+      {(isFetching || isIdle) && <p>Loading...</p>}
       {props.children}
     </RegistrationContext.Provider>
   );
@@ -70,11 +76,12 @@ export const RegistrationProvider = (props: Props) => {
 
 export function useRegistration() {
   const context = useContext(RegistrationContext);
-  const { registrations, searchRegistrations, onChangeStatus } = context;
+  const { registrations, newRegistration, refetch, onChangeStatus } = context;
 
   return {
     registrations,
-    searchRegistrations,
+    newRegistration,
+    refetch,
     onChangeStatus,
   };
 }

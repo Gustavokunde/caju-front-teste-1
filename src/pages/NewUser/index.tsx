@@ -3,10 +3,13 @@ import { useHistory } from "react-router-dom";
 import Button from "~/components/Buttons";
 import { IconButton } from "~/components/Buttons/IconButton";
 import TextField from "~/components/TextField";
+import { useRegistration } from "~/hooks/useRegistration";
 import routes from "~/router/routes";
 import * as S from "./styles";
 
 const NewUserPage = () => {
+  const { newRegistration } = useRegistration();
+
   const history = useHistory();
   const goToHome = () => {
     history.push(routes.dashboard);

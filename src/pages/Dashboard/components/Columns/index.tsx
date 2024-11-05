@@ -1,5 +1,5 @@
 import { REGISTRATION_STATUS } from "~/types/registration";
-import { useRegistration } from "../../hooks/useRegistration";
+import { useRegistration } from "../../../../hooks/useRegistration";
 import RegistrationCard from "../RegistrationCard";
 import * as S from "./styles";
 

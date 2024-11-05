@@ -6,7 +6,7 @@ import { IconButton } from "~/components/Buttons/IconButton";
 import TextField from "~/components/TextField";
 import routes from "~/router/routes";
 import { formatCpf, isCpfValid } from "~/utils/cpf";
-import { useRegistration } from "../../hooks/useRegistration";
+import { useRegistration } from "../../../../hooks/useRegistration";
 import * as S from "./styles";
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 export const SearchBar = (props: Props) => {
   const history = useHistory();
   const [search, setSearch] = useState("");
-  const { searchRegistrations } = useRegistration();
+  const { refetch } = useRegistration();
 
   const goToNewAdmissionPage = () => {
     history.push(routes.newUser);
@@ -25,10 +25,6 @@ export const SearchBar = (props: Props) => {
   const onChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     const value = event.target.value;
     setSearch(formatCpf(value));
-  };
-
-  const onRefresh = () => {
-    searchRegistrations();
   };
 
   useEffect(() => {
@@ -43,7 +39,7 @@ export const SearchBar = (props: Props) => {
         onChange={onChange}
       />
       <S.Actions>
-        <IconButton aria-label="refetch" onClick={onRefresh}>
+        <IconButton aria-label="refetch" onClick={refetch}>
           <HiRefresh />
         </IconButton>
         <Button onClick={goToNewAdmissionPage}>Nova Admissão</Button>
