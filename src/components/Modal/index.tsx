@@ -22,18 +22,23 @@ const ModalContent = styled.div`
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
-
-const CloseButton = styled.button`
-  margin-top: 10px;
+const ModalButton = styled.button`
+  margin: 10px;
   padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
   border-radius: 5px;
   cursor: pointer;
-
+  border: none;
+  background-color: #007c89;
+  color: white;
   &:hover {
-    background-color: #0056b3;
+    background-color: #005f6a;
+  }
+`;
+
+const CancelButton = styled(ModalButton)`
+  background-color: #ccc;
+  &:hover {
+    background-color: #aaa;
   }
 `;
 
@@ -41,16 +46,18 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   message: string | null;
+  onConfirm?: () => void;
 }
 
-const Modal = ({ isOpen, onClose, message }: ModalProps) => {
+const Modal = ({ isOpen, onClose, message, onConfirm }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
     <Overlay data-testid="modal">
       <ModalContent>
         <p>{message}</p>
-        <CloseButton onClick={onClose}>Fechar</CloseButton>
+        {onConfirm && <ModalButton onClick={onConfirm}>Confirmar</ModalButton>}
+        <CancelButton onClick={onClose}>Fechar</CancelButton>
       </ModalContent>
     </Overlay>
   );

@@ -4,7 +4,6 @@ import Modal from "~/components/Modal";
 import {
   changeRegistrationStatus,
   createRegistration,
-  deleteRegistration,
   getRegistrations,
 } from "~/services/registrations";
 import { Registration, REGISTRATION_STATUS } from "~/types/registration";
@@ -41,6 +40,10 @@ interface Props {
 export const RegistrationProvider = (props: Props) => {
   const [searchField, setSearchField] = useState("");
   const [modalMessage, setModalMessage] = useState<string | null>(null);
+  const [confirmationMessage, setConfirmationMessage] = useState<string | null>(
+    null
+  );
+  const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null);
 
   const { data, isFetching, isLoading, refetch } = useQuery({
     queryKey: ["registrations"],
@@ -72,7 +75,7 @@ export const RegistrationProvider = (props: Props) => {
   });
 
   const { mutateAsync: deleteRegistrationById } = useMutation({
-    mutationFn: (id: number) => onRemoveRegistration(id),
+    mutationFn: (id: number) => removeRegistration(id),
     onSuccess: () => {
       setModalMessage("Registro deletado com sucesso!");
     },
@@ -81,25 +84,46 @@ export const RegistrationProvider = (props: Props) => {
     },
   });
 
-  const onRemoveRegistration = async (id: number) => {
-    await deleteRegistration(id);
-    await refetch();
-  };
-
   const createNewRegistration = async (registration: Registration) => {
-    registration.status = REGISTRATION_STATUS.REVIEW;
-    await onNewRegistration(registration);
+    setConfirmationMessage("Deseja criar este registro?");
+    setConfirmAction(() => async () => {
+      registration.status = REGISTRATION_STATUS.REVIEW;
+      await onNewRegistration(registration);
+    });
   };
 
   const changeStatus = async (
     registration: Registration,
     status: REGISTRATION_STATUS
   ) => {
-    await onChangeStatus({ registration, status });
-    await refetch();
+    setConfirmationMessage("Deseja alterar o status deste registro?");
+    setConfirmAction(() => async () => {
+      await onChangeStatus({ registration, status });
+      await refetch();
+    });
   };
 
-  const closeModal = () => setModalMessage(null);
+  const removeRegistration = async (id: number) => {
+    setConfirmationMessage("Deseja deletar este registro?");
+    setConfirmAction(() => async () => {
+      await deleteRegistrationById(id);
+      await refetch();
+    });
+  };
+
+  const handleConfirmAction = async () => {
+    if (confirmAction) await confirmAction();
+    closeConfirmationModal();
+  };
+
+  const closeConfirmationModal = () => {
+    setConfirmationMessage(null);
+    setConfirmAction(null);
+  };
+
+  const closeMessageModal = () => {
+    setModalMessage(null);
+  };
 
   return (
     <RegistrationContext.Provider
@@ -112,9 +136,17 @@ export const RegistrationProvider = (props: Props) => {
         changeStatus,
       }}
     >
+      {confirmationMessage && (
+        <Modal
+          isOpen={!!confirmationMessage}
+          onClose={closeConfirmationModal}
+          message={confirmationMessage}
+          onConfirm={handleConfirmAction}
+        />
+      )}
       <Modal
         isOpen={!!modalMessage}
-        onClose={closeModal}
+        onClose={closeMessageModal}
         message={modalMessage}
       />
       {(isFetching || isLoading || isPending) && <p>Loading...</p>}
