@@ -29,7 +29,7 @@ type Props = {
 const TextField = React.forwardRef(({ error, ...props }: Props, ref) => (
   <div>
     <label htmlFor={props.id}>{props.label}</label>
-    <Input ref={ref} {...props} />
+    <Input data-testid={props.name} ref={ref} {...props} />
     <span style={{ fontSize: 12, color: "red" }}>{error}</span>
   </div>
 ));
