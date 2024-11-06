@@ -25,4 +25,25 @@ describe("Modal Component", () => {
     fireEvent.click(closeButton);
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
+
+  it('should call  onConfirm when clicking on "Confirmar"', () => {
+    const handleConfirm = jest.fn();
+    render(
+      <Modal
+        isOpen={true}
+        onClose={() => {}}
+        message="Test message"
+        onConfirm={handleConfirm}
+      />
+    );
+    const confirmButton = screen.getByText("Confirmar");
+    fireEvent.click(confirmButton);
+    expect(handleConfirm).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not render "Confirmar"  button when onConfirm is not being passed', () => {
+    render(<Modal isOpen={true} onClose={() => {}} message="Test message" />);
+    const confirmButton = screen.queryByText("Confirmar");
+    expect(confirmButton).toBeNull();
+  });
 });
